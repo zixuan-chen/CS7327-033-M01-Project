@@ -28,7 +28,7 @@ class Quadratic(nn.Module):
             init.normal_(self.bias)
 
     def forward(self, input):
-        output = torch.matmul(input*input, self.weight1.t()) + torch.matmul(input, self.weight2.t())
+        output = torch.matmul(input * input, self.weight1.t()) + torch.matmul(input, self.weight2.t())
         if self.bias is not None:
             output += self.bias
         return output
@@ -39,18 +39,21 @@ class Quadratic(nn.Module):
         )
 
 
-class MLQP(nn.Module):
+class MinMaxNet2x2(nn.Module):
+
     def __init__(self):
-        super(MLQP, self).__init__()
-        self.qc1 = Quadratic(2, 512)
-        self.qc2 = Quadratic(512, 2)
-        self.qc3 = Quadratic(50, 2)
-        self.fc1 = nn.Linear(2, 100)
-        self.fc2 = nn.Linear(100, 50)
-        self.fc3 = nn.Linear(50, 2)
+        super(MinMaxNet2x2, self).__init__()
+        self.net = [nn.Sequential(Quadratic(2, 512), nn.Sigmoid(), Quadratic(512, 1)),
+                    nn.Sequential(Quadratic(2, 512), nn.Sigmoid(), Quadratic(512, 1)),
+                    nn.Sequential(Quadratic(2, 512), nn.Sigmoid(), Quadratic(512, 1)),
+                    nn.Sequential(Quadratic(2, 512), nn.Sigmoid(), Quadratic(512, 1))]
 
     def forward(self, x):
-        x = torch.sigmoid(self.qc1(x))
-        x = self.qc2(x)
-
-        return x
+        # ================== min-max net 1 ============================
+        # min1 = torch.min(self.net[0](x), self.net[2](x))
+        # min2 = torch.min(self.net[1](x), self.net[3](x))
+        # ================== min-max net 2 ============================
+        min1 = torch.min(self.net[0](x), self.net[1](x))
+        min2 = torch.min(self.net[2](x), self.net[3](x))
+        max = torch.max(min1, min2)
+        return max
