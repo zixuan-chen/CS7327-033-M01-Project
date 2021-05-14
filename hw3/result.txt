@@ -1,0 +1,8 @@
+=====================Best Performance=======================
+target_source = sub_0, ADNN: 0.657050, DNN: 0.358552
+target_source = sub_1, ADNN: 0.815720, DNN: 0.666470
+target_source = sub_2, ADNN: 0.867825, DNN: 0.845158
+target_source = sub_3, ADNN: 0.804533, DNN: 0.587872
+target_source = sub_4, ADNN: 0.468649, DNN: 0.467471
+=====================Summary=================================
+ADNN: 0.664704, DNN: 0.572387
